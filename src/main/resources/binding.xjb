@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bindings xmlns="http://java.sun.com/xml/ns/jaxb"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          version="2.1">
+    <bindings schemaLocation="rss25SB.xsd">
+        <package name="fr.univrouen.rss25SB.model"/>
+        <bindings node="//xsd:complexType[@name='itemType']">
+            <class>
+                <annotation>
+                    <annotation-name>jakarta.persistence.Entity</annotation-name>
+                </annotation>
+            </class>
+            <bindings node=".//xsd:element[@name='id']">
+                <property>
+                    <annotation>
+                        <annotation-name>jakarta.persistence.Id</annotation-name>
+                    </annotation>
+                </property>
+            </bindings>
+        </bindings>
+    </bindings>
+</bindings>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://univ.fr/rss25" 
+    xmlns="http://univ.fr/rss25" 
+    elementFormDefault="qualified">
+
+    <!-- Définition des types simples -->
+    <xs:simpleType name="RelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="self"/>
+            <xs:enumeration value="alternate"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="FormatsUsuels">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="GIF"/>
+            <xs:enumeration value="JPEG"/>
+            <xs:enumeration value="JPG"/>
+            <xs:enumeration value="BMP"/>
+            <xs:enumeration value="PNG"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ContentTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="text"/>
+            <xs:enumeration value="html"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NameType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="64"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="TextLong">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="128"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="LangType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-z]{2,3}(-[A-Z]{2}|\d{3})?"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="emailType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z0-9._~%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="mimeType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-z]+/[a-z0-9.+-]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="title" type="TextLong"/>
+    <xs:element name="pubDate" type="xs:dateTime"/>
+    <xs:element name="copyright" type="TextLong"/>
+    <xs:element name="feed" type="FeedType"/>
+
+    <xs:complexType name="FeedType">
+        <xs:sequence>
+            <xs:element ref="title"/>
+            <xs:element ref="pubDate"/>
+            <xs:element ref="copyright"/>
+            <xs:element name="link" type="LinkType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="item" type="ItemType" minOccurs="1" maxOccurs="10"/>
+        </xs:sequence>
+        <xs:attribute name="lang" type="LangType"/>
+        <xs:attribute name="version" type="xs:string" fixed="25"/>
+    </xs:complexType>
+
+    <xs:complexType name="LinkType">
+        <xs:attribute name="rel" type="RelType"/>
+        <xs:attribute name="type" type="mimeType"/>
+        <xs:attribute name="href" type="xs:anyURI"/>
+    </xs:complexType>
+
+    <xs:complexType name="ItemType">
+        <xs:sequence>
+            <xs:element name="guid" type="xs:anyURI"/>
+            <xs:element name="title" type="TextLong"/>
+            <xs:element name="category" type="CategoryType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="published" type="xs:dateTime" minOccurs="1"/>
+            <xs:element name="updated" type="xs:dateTime" minOccurs="1"/>
+            <xs:element name="image" type="ImageType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="content" type="ContentType"/>
+            <xs:element name="author" type="AuthorType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CategoryType">
+        <xs:attribute name="term" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- Définition de l'élément Image avec contraintes -->
+    <xs:complexType name="ImageType">
+        <xs:attribute name="type" type="FormatsUsuels" use="required"/>
+        <xs:attribute name="href" type="xs:anyURI" use="required"/>
+        <xs:attribute name="alt" type="xs:string" use="required"/>
+        <xs:attribute name="length" type="xs:positiveInteger" use="optional"/>
+    </xs:complexType>
+
+    <!-- Définition de Content avec validation de type -->
+    <xs:complexType name="ContentType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="type" type="ContentTypeEnum" use="required"/>
+                <xs:attribute name="src" type="xs:anyURI" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="AuthorType">
+        <xs:sequence>
+            <xs:element name="name" type="NameType"/>
+            <xs:element name="email" type="emailType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="uri" type="xs:anyURI" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

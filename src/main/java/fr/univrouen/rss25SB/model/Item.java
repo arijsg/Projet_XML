@@ -1,6 +1,7 @@
 package fr.univrouen.rss25SB.model;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.univrouen.rss25SB.adapters.OffsetDateTimeAdapter;
@@ -16,7 +17,6 @@ import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -35,11 +35,10 @@ public class Item {
     @XmlElement(namespace = "http://univ.fr/rss25", required = true)
     private String title;
 
-    // Relations JPA cachées à JAXB
     @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "item_id")
-    private List<Category> category;
+    private List<Category> category = new ArrayList<>();
 
     @XmlElement(namespace = "http://univ.fr/rss25")
     @XmlJavaTypeAdapter(OffsetDateTimeAdapter.class)
@@ -62,10 +61,19 @@ public class Item {
     @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "item_id")
-    private List<PersonType> authorsAndContributors;
+    private List<PersonType> authorsAndContributors = new ArrayList<>();
 
-    
-    // Getters / Setters
+    // === Constructeur sans argument requis par JPA et JAXB ===
+    public Item() {
+    }
+
+    // === Constructeur utile pour tester ===
+    public Item(String guid, String title) {
+        this.guid = guid;
+        this.title = title;
+    }
+
+    // === Getters / Setters ===
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -91,5 +99,7 @@ public class Item {
     public void setContent(Content content) { this.content = content; }
 
     public List<PersonType> getAuthorsAndContributors() { return authorsAndContributors; }
-    public void setAuthorsAndContributors(List<PersonType> authorsAndContributors) { this.authorsAndContributors = authorsAndContributors; }
+    public void setAuthorsAndContributors(List<PersonType> authorsAndContributors) {
+        this.authorsAndContributors = authorsAndContributors;
+    }
 }

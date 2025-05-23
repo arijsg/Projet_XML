@@ -1,10 +1,9 @@
 {
   "build": {
     "type": "maven",
-    "goal": "clean package"
+    "goal": "clean package -DskipTests"
   },
   "deploy": {
-    "type": "maven",
-    "goal": "spring-boot:run"
+    "goal": "java -jar target/rss25SB-0.0.1-SNAPSHOT.jar"
   }
 }

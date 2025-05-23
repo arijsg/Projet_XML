@@ -1,21 +1,25 @@
 package fr.univrouen.rss25SB.utils;
 
-import javax.xml.XMLConstants;
+import java.io.IOException;
+
 import javax.xml.transform.Source;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.xml.sax.SAXException;
+
 public class ValidationUtils {
-    public static boolean validateXML(Source xml, Source xsd) {
+
+    public static boolean validateXML(Source xmlSource, Source xsdSource) {
         try {
-            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = factory.newSchema(xsd);
+            SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+            Schema schema = factory.newSchema(xsdSource);
             Validator validator = schema.newValidator();
-            validator.validate(xml);
+            validator.validate(xmlSource);
             return true;
-        } catch (Exception e) {
-            System.err.println("XSD validation error: " + e.getMessage());
+        } catch (SAXException | IOException e) {
+            e.printStackTrace();
             return false;
         }
     }

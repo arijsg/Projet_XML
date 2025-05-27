@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           targetNamespace="http://univ.fr/rss25" 
+           xmlns="http://univ.fr/rss25" 
+           elementFormDefault="qualified">
+
+  <xs:simpleType name="textType">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="128"/>
+      <xs:pattern value="[a-zA-Z0-9 \t/+]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="nameType">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="64"/>
+      <xs:pattern value="[a-zA-Z0-9 \t/+]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+    <xs:simpleType name="urlType">
+    <xs:restriction base="xs:anyURI">
+      <xs:pattern value="[a-zA-Z0-9;:,.@()&amp;#!?$*=\\\[\]\\+/~]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType name="emailType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-zA-Z0-9.\-_~]+@[a-zA-Z0-9.\-_~]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="langType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-z]{2,3}(-([A-Z]{2}|[0-9]{3}))?"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dateTimeType">
+    <xs:restriction base="xs:dateTime">
+      <xs:pattern value="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="formatUsuel">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="GIF"/>
+      <xs:enumeration value="JPEG"/>
+      <xs:enumeration value="JPG"/>
+      <xs:enumeration value="BMP"/>
+      <xs:enumeration value="PNG"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="relType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="self"/>
+      <xs:enumeration value="alternate"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="contentType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="text"/>
+      <xs:enumeration value="html"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="mimeType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-zA-Z0-9]+/[a-zA-Z0-9+.\-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="feed">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="title" type="textType"/>
+        <xs:element name="pubDate" type="dateTimeType"/>
+        <xs:element name="copyright" type="textType"/>
+        <xs:element name="link" minOccurs="1" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="rel" type="relType" use="required"/>
+            <xs:attribute name="type" type="mimeType" use="required"/>
+            <xs:attribute name="href" type="urlType" use="required"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="item" minOccurs="1" maxOccurs="10">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="guid" type="urlType">
+                <xs:unique name="uniqueGuid">
+                  <xs:selector xpath=".//guid"/>
+                  <xs:field xpath="."/>
+                </xs:unique>
+              </xs:element>
+              <xs:element name="title" type="textType"/>
+              <xs:element name="category" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="term" type="xs:string" use="required"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:choice>
+                <xs:element name="published" type="dateTimeType"/>
+                <xs:element name="updated" type="dateTimeType"/>
+              </xs:choice>
+              <xs:element name="image" minOccurs="0">
+                <xs:complexType>
+                  <xs:attribute name="type" type="formatUsuel" use="required"/>
+                  <xs:attribute name="href" type="urlType" use="required"/>
+                  <xs:attribute name="alt" type="textType" use="required"/>
+                  <xs:attribute name="length" type="xs:integer" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="content">
+                <xs:complexType mixed="true">
+                  <xs:simpleContent>
+                    <xs:extension base="xs:string">
+                      <xs:attribute name="type" type="contentType" use="required"/>
+                      <xs:attribute name="src" type="urlType" use="optional"/>
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:choice minOccurs="1" maxOccurs="unbounded">
+                <xs:element name="author" type="personType"/>
+                <xs:element name="contributor" type="personType"/>
+              </xs:choice>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="lang" type="langType" use="required"/>
+      <xs:attribute name="version" type="xs:string" fixed="25" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="personType">
+    <xs:all>
+      <xs:element name="name" type="nameType"/>
+      <xs:element name="email" type="emailType" minOccurs="0"/>
+      <xs:element name="uri" type="urlType" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+</xs:schema>

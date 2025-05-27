@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Test RSS25SB API</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 2rem; background: #f0f0f0; }
+  button { margin: 0.5rem; padding: 0.5rem 1rem; cursor: pointer; }
+  #result { white-space: pre-wrap; background: #fff; border: 1px solid #ccc; padding: 1rem; margin-top: 1rem; max-height: 300px; overflow: auto; }
+</style>
+</head>
+<body>
+  <h1>Test RSS25SB API</h1>
+
+  <button onclick="getSummaryXml()">Liste résumé XML</button>
+  <button onclick="getSummaryHtml()">Liste résumé HTML</button>
+  <button onclick="getArticleDetail(1)">Détail article ID 1 (XML)</button>
+
+  <div id="result">Résultat ici...</div>
+
+<script>
+  const baseUrl = '/rss25SB';
+
+  function getSummaryXml() {
+    fetch(baseUrl + '/resume/xml')
+      .then(resp => resp.text())
+      .then(text => {
+        document.getElementById('result').textContent = text;
+      })
+      .catch(err => {
+        document.getElementById('result').textContent = 'Erreur: ' + err;
+      });
+  }
+
+  function getSummaryHtml() {
+    fetch(baseUrl + '/resume/html')
+      .then(resp => resp.text())
+      .then(html => {
+        document.getElementById('result').innerHTML = html;
+      })
+      .catch(err => {
+        document.getElementById('result').textContent = 'Erreur: ' + err;
+      });
+  }
+
+  function getArticleDetail(id) {
+    fetch(baseUrl + '/resume/xml/' + id)
+      .then(resp => resp.text())
+      .then(text => {
+        document.getElementById('result').textContent = text;
+      })
+      .catch(err => {
+        document.getElementById('result').textContent = 'Erreur: ' + err;
+      });
+  }
+</script>
+</body>
+</html>
